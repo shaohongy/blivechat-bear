@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import argparse
 import asyncio
@@ -15,6 +16,7 @@ import tornado.web
 import api.chat
 import api.main
 import api.open_live
+import api.graio_api
 import config
 import models.database
 import services.avatar
@@ -22,14 +24,30 @@ import services.chat
 import services.translate
 import update
 import utils.request
+from json import loads
+import services.gradio_client as gradio
 
 logger = logging.getLogger(__name__)
 
+
+class GradioHandler(tornado.web.RequestHandler):
+    async def post(self):
+        args = self.request.body.decode('utf-8')
+        args = loads(args)
+        url = args.get('url')
+        voice_name = args.get('voice_name')
+        text = args.get('text')
+        print(url, voice_name, text)
+        await gradio.predict(url, voice_name, text)
+
+
 ROUTES = [
+    (r'/api/v1/tts', GradioHandler),
     *api.main.ROUTES,
     *api.chat.ROUTES,
     *api.open_live.ROUTES,
     *api.main.LAST_ROUTES,
+    *api.graio_api.ROUTES,
 ]
 
 server: Optional[tornado.httpserver.HTTPServer] = None
@@ -50,23 +68,34 @@ async def main():
 def init():
     init_signal_handlers()
 
+    # 解析参数
     args = parse_args()
 
     init_logging(args.debug)
     logger.info('App started, initializing')
+    # 读取配置
     config.init()
 
     utils.request.init()
     models.database.init(args.debug)
 
+    # 头像、翻译、聊天 初始化
     services.avatar.init()
     services.translate.init()
     services.chat.init()
 
-    update.check_update()
-
+    # 服务器初始化
     init_server(args.host, args.port, args.debug)
-    return server is not None
+    if server is None:
+        return False
+
+    # predict("弹幕姬！启动！")
+
+    # services.plugin.init()
+
+    # 检查更新
+    # update.check_update()
+    return True
 
 
 def init_signal_handlers():
@@ -153,6 +182,8 @@ async def run():
 
 
 async def shut_down():
+    services.plugin.shut_down()
+
     logger.info('Closing server')
     server.stop()
     await server.close_all_connections()
