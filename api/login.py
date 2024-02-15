@@ -82,7 +82,9 @@ class StartHandler(api.base.ApiHandler):  # noqa
 
 class CheckHandler(api.base.ApiHandler):  # noqa
     async def get(self):
-        async with ClientSession(cookies={'appkey': 'aae92bc66f3edfab'}) as session:
+        async with ClientSession(headers={
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+        }, cookies={'appkey': 'aae92bc66f3edfab'}) as session:
             qrcode_key = self.get_query_argument('qrcode_key')
 
             res = await session.get('https://passport.bilibili.com/x/passport-login/web/qrcode/poll',
@@ -119,7 +121,9 @@ class AuthHandler(api.base.ApiHandler):  # noqa
             with shelve.open('data/login') as db:
                 cookie = db.get('cookie')
 
-            async with ClientSession() as session:
+            async with ClientSession(headers={
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+                }) as session:
                 res = await session.get(ROOM_INIT_URL, params={'room_id': room_id})
                 if res.status != 200:
                     logger.warning('room=%d getInfoByRoom() failed, status=%d, reason=%s', room_id,

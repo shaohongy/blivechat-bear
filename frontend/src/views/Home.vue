@@ -1262,9 +1262,10 @@ export default {
     },
     async startLogin() {
       const res = (await axios.get('/api/login/start')).data
+      console.log(res)
       this.login.key = res.key
       this.login.image = `data:image/png;base64,${res.qr}`
-      // this.login.check = setInterval(this.checkLogin, 1000)
+      this.login.check = setInterval(this.checkLogin, 1000)
     },
     async checkLogin() {
       const res = (await axios.get('/api/login/check', { params: { 'qrcode_key': this.login.key } })).data

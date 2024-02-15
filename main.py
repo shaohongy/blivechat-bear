@@ -17,6 +17,7 @@ import api.chat
 import api.main
 import api.open_live
 import api.graio_api
+import api.login
 import config
 import models.database
 import services.avatar
@@ -45,6 +46,7 @@ ROUTES = [
     (r'/api/v1/tts', GradioHandler),
     *api.main.ROUTES,
     *api.chat.ROUTES,
+    *api.login.ROUTES,
     *api.open_live.ROUTES,
     *api.main.LAST_ROUTES,
     *api.graio_api.ROUTES,
