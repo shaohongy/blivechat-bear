@@ -29,6 +29,7 @@ export default class ChatClientDirectWeb extends ChatClientOfficialBase {
     }
     this.roomId = res.roomId
     this.roomOwnerUid = res.ownerUid
+    console.log(res)
     if (res.hostServerList.length !== 0) {
       this.hostServerList = res.hostServerList
     }
@@ -112,6 +113,13 @@ export default class ChatClientDirectWeb extends ChatClientOfficialBase {
     // 增加区分表情的细节数据
     if (info[0][13]) {
       data.emoticonDetail = info[0][13]
+    } console.log(info[0][15])
+    if (info[0][15] && info[0][15].extra) {
+
+      const extraMap = JSON.parse(info[0][15].extra)
+      if (extraMap.emots) {
+        data.emots = extraMap.emots
+      }
     }
     this.onAddText(data)
   }

@@ -784,6 +784,43 @@
               </el-col>
             </el-row>
           </el-tab-pane>
+
+          <el-tab-pane :label="$t('home.aidanmuku')">
+            <el-card shadow="never">
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="10">
+                  <el-form-item label="是否开启AI弹幕">
+                    <el-switch v-model="form.ai"></el-switch>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="10">
+                  <el-form-item label="普通弹幕是否朗读">
+                    <el-switch v-model="form.pt"></el-switch>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="24">
+                  <el-form-item label="API地址" >
+                    <el-input placeholder="http://127.0.0.1:7860/" v-model="inputUrl" :disabled="apiIsEdit"
+                    style="width: calc(100% - 16em); margin-right: 1em;">
+                    </el-input>
+                    <el-button type="primary" icon="el-icon-edit" @click="changeStatus"></el-button>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="10">
+                  <el-form-item label="醒目留言是否朗读">
+                    <el-switch v-model="form.sc"></el-switch>
+                  </el-form-item>
+                </el-col>
+                <el-col :xs="24" :sm="10">
+                  <el-form-item label="模型" >
+                    <el-input v-model="voiceName" :disabled="apiIsEdit" style="width: calc(100% - 16em); margin-right: 1em;">
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-card>
+          </el-tab-pane>
+
         </el-tabs>
       </el-form>
     </p>
@@ -880,6 +917,9 @@ export default {
   name: 'Home',
   data() {
     return {
+      inputUrl: 'http://127.0.0.1:7860/',
+      voiceName: 'asaki',
+      apiIsEdit: true,
       serverConfig: {
         enableTranslate: true,
         enableUploadFile: true,
@@ -921,6 +961,12 @@ export default {
     }
   },
   watch: {
+    inputUrl(newval) {
+      window.localStorage.apiUrl = newval
+    },
+    voiceName(newName) {
+      window.localStorage.voiceName = newName
+    },
     unvalidatedRoomUrl: 'updateRoomUrl',
     roomUrl: _.debounce(function() {
       window.localStorage.roomKeyType = this.form.roomKeyType
@@ -933,8 +979,16 @@ export default {
   mounted() {
     this.updateServerConfig()
     this.updateRoomUrl()
+    this.initUrl()
   },
   methods: {
+    initUrl() {
+      window.localStorage.apiUrl = this.inputUrl
+      window.localStorage.voiceName = this.voiceName
+    },
+    changeStatus() {
+      this.apiIsEdit = !this.apiIsEdit
+    },
     async updateServerConfig() {
       try {
         this.serverConfig = (await mainApi.getServerInfo()).config

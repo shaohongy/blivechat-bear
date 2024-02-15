@@ -171,7 +171,12 @@ export default {
     resetConfig: '恢复默认设置',
     exportEmoticonConfig: '导出表情包配置',
 
-    failedToParseConfig: '配置解析失败：'
+    failedToParseConfig: '配置解析失败：',
+
+    aidanmuku: 'AI读弹幕',
+
+    isOpen: '是否开启AI弹幕',
+
   },
   stylegen: {
     general: '通用',

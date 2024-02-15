@@ -168,7 +168,9 @@ export default {
     resetConfig: 'Reset config',
     exportDanmuPictureConfig: 'Export emoticon config',
 
-    failedToParseConfig: 'Failed to parse config: '
+    failedToParseConfig: 'Failed to parse config: ',
+    aidanmuku: 'AI danmuku',
+    isOpen: 'AI Danmuku is open',
   },
   stylegen: {
     general: 'General',

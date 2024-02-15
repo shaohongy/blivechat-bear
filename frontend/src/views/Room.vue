@@ -295,7 +295,10 @@ export default {
       cfg.maxDanmakuInterval = toInt(cfg.maxDanmakuInterval, chatConfig.DEFAULT_CONFIG.maxDanmakuInterval)
 
       chatConfig.sanitizeConfig(cfg)
+      cfg.apiUrl = window.localStorage.apiUrl
+      cfg.model = window.localStorage.voiceName
       this.config = cfg
+      console.log('config', this.config)
     },
     toObjIfJson(str) {
       if (typeof str !== 'string') {
@@ -424,7 +427,20 @@ export default {
       this.$refs.renderer.addMessage(message)
     },
     async onAddText(data) {
+      console.log('onAddText', data)
+      let sendName = data.authorName
+      // let apiUrl = window.localStorage.apiUrl
+      let content = data.content
 
+      // console.log(sendName, apiUrl, content)
+      let text = `${sendName} 说 ${content}`
+      console.log(text)
+      // TODO 获取路径的参数
+      // axios.post('/api/v1/tts', {
+      //   url: window.localStorage.apiUrl,
+      //   voice_name: this.config.model,
+      //   text
+      // })
       // 匹配 #Hex 的正则表达式
       let textColor = 'initial'
       if (this.config.allowTextColorSetting) {

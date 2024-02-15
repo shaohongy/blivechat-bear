@@ -169,7 +169,10 @@ export default {
     resetConfig: 'コンフィグのリセット',
     exportEmoticonConfig: 'スタンプコンフィグの導出',
 
-    failedToParseConfig: 'コンフィグ解析に失敗しました'
+    failedToParseConfig: 'コンフィグ解析に失敗しました',
+
+    aidanmuku: 'AI弾幕をよみます',
+    isOpen: '是否开启AI弹幕',
   },
   stylegen: {
     general: '通常',
