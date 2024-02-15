@@ -114,3 +114,6 @@ data/emoticons/*
 data/custom_public/*
 !data/custom_public/README.txt
 log/*
+
+/frontend/dist-old
+/frontend/dist
