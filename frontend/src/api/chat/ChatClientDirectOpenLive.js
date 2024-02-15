@@ -152,6 +152,7 @@ export default class ChatClientDirectOpenLive extends ChatClientOfficialBase {
     this.websocket.send(this.makePacket(this.authBody, base.OP_AUTH))
   }
 
+  // cmd:"INTERACT_WORD"
   // TODO: 欢迎入场 ws 的信息，然后给到 Room.vue
   async interactWordCallback(command) {
     if (!this.onInteractWord) {
@@ -176,6 +177,7 @@ export default class ChatClientDirectOpenLive extends ChatClientOfficialBase {
   }
 
 
+  // cmd:"DANMU_MSG"
   async danmuMsgCallback(command) {
     console.log(command)
     if (!this.onAddText) {
@@ -257,28 +259,31 @@ export default class ChatClientDirectOpenLive extends ChatClientOfficialBase {
     this.onAddText(data)
   }
 
-  sendGiftCallback(command) {
-    if (!this.onAddGift) {
-      return
-    }
-    let data = command.data
-    //  if (data.coin_type !== 'gold') { // 白嫖不丢人
-    //    return
-    //  }
+  // cmd： "SEND_GIFT"
+  // sendGiftCallback(command) {
+  //   if (!this.onAddGift) {
+  //     return
+  //   }
+  //   let data = command.data
+  //   //  if (data.coin_type !== 'gold') { // 白嫖不丢人
+  //   //    return
+  //   //  }
 
-    data = {
-      id: getUuid4Hex(),
-      avatarUrl: avatar.processAvatarUrl(data.face),
-      timestamp: data.timestamp,
-      authorName: data.uname,
-      coinType: data.coin_type,
-      totalCoin: data.total_coin,
-      giftName: data.giftName,
-      num: data.num
-    }
-    this.onAddGift(data)
-  }
+  //   data = {
+  //     id: getUuid4Hex(),
+  //     avatarUrl: avatar.processAvatarUrl(data.face),
+  //     timestamp: data.timestamp,
+  //     authorName: data.uname,
+  //     coinType: data.coin_type,
+  //     totalCoin: data.total_coin,
+  //     giftName: data.giftName,
+  //     num: data.num
+  //   }
+  //   this.onAddGift(data)
+  // }
 
+
+  // cmd:"GUARD_BUY"
   async guardBuyCallback(command) {
     if (!this.onAddMember) {
       return
@@ -294,7 +299,8 @@ export default class ChatClientDirectOpenLive extends ChatClientOfficialBase {
     }
     this.onAddMember(data)
   }
-
+  
+  // cmd:"SUPER_CHAT_MESSAGE"
   superChatMessageCallback(command) {
     if (!this.onAddSuperChat) {
       return
@@ -313,6 +319,7 @@ export default class ChatClientDirectOpenLive extends ChatClientOfficialBase {
     this.onAddSuperChat(data)
   }
 
+  // cmd:"SUPER_CHAT_MESSAGE_DELETE"
   superChatMessageDeleteCallback(command) {
     if (!this.onDelSuperChat) {
       return
@@ -325,6 +332,7 @@ export default class ChatClientDirectOpenLive extends ChatClientOfficialBase {
     this.onDelSuperChat({ ids })
   }
 
+  // cmd:"LIVE_OPEN_PLATFORM_DM"
   async dmCallback(command) {
     console.log(command)
     if (!this.onAddText) {
@@ -367,98 +375,104 @@ export default class ChatClientDirectOpenLive extends ChatClientOfficialBase {
     this.onAddText(data)
   }
 
-  // sendGiftCallback(command) {
-  //   if (!this.onAddGift) {
-  //     return
-  //   }
-  //   let data = command.data
-  //   if (!data.paid) { // 丢人
-  //     data.price = 0
-  //   }
+  // cmd: "LIVE_OPEN_PLATFORM_SEND_GIFT"
+  sendGiftCallback(command) {
+    if (!this.onAddGift) {
+      return
+    }
+    let data = command.data
+    if (!data.paid) { // 丢人
+      data.price = 0
+    }
 
-  //   data = {
-  //     id: data.msg_id,
-  //     avatarUrl: chat.processAvatarUrl(data.uface),
-  //     timestamp: data.timestamp,
-  //     authorName: data.uname,
-  //     privilegeType: data.guard_level,
-  //     paid: data.paid,
-  //     totalCoin: data.price * data.gift_num,
-  //     giftName: data.gift_name,
-  //     num: data.gift_num,
-  //     medalName: data.fans_medal_name,
-  //     medalLevel: data.fans_medal_level,
-  //     isFanGroup: data.fans_medal_wearing_status ? true : false
-  //   }
-  //   this.onAddGift(data)
-  // }
+    data = {
+      id: data.msg_id,
+      avatarUrl: chat.processAvatarUrl(data.uface),
+      timestamp: data.timestamp,
+      authorName: data.uname,
+      privilegeType: data.guard_level,
+      paid: data.paid,
+      totalCoin: data.price * data.gift_num,
+      giftName: data.gift_name,
+      num: data.gift_num,
+      medalName: data.fans_medal_name,
+      medalLevel: data.fans_medal_level,
+      isFanGroup: data.fans_medal_wearing_status ? true : false
+    }
+    this.onAddGift(data)
+  }
 
-  // async guardCallback(command) {
-  //   if (!this.onAddMember) {
-  //     return
-  //   }
+  // cmd:"LIVE_OPEN_PLATFORM_GUARD"
+  async guardCallback(command) {
+    if (!this.onAddMember) {
+      return
+    }
 
-  //   let data = command.data
-  //   data = {
-  //     id: data.msg_id,
-  //     avatarUrl: chat.processAvatarUrl(data.user_info.uface),
-  //     timestamp: data.timestamp,
-  //     authorName: data.user_info.uname,
-  //     privilegeType: data.guard_level,
-  //     guardNum: data.guard_num,
-  //     guardUnit: data.guard_unit,
-  //     medalName: data.fans_medal_name,
-  //     medalLevel: data.fans_medal_level,
-  //     isFanGroup: data.fans_medal_wearing_status ? true : false
-  //   }
-  //   this.onAddMember(data)
-  // }
+    let data = command.data
+    data = {
+      id: data.msg_id,
+      avatarUrl: chat.processAvatarUrl(data.user_info.uface),
+      timestamp: data.timestamp,
+      authorName: data.user_info.uname,
+      privilegeType: data.guard_level,
+      guardNum: data.guard_num,
+      guardUnit: data.guard_unit,
+      medalName: data.fans_medal_name,
+      medalLevel: data.fans_medal_level,
+      isFanGroup: data.fans_medal_wearing_status ? true : false
+    }
+    this.onAddMember(data)
+  }
 
-  // superChatCallback(command) {
-  //   if (!this.onAddSuperChat) {
-  //     return
-  //   }
+  // cmd:"LIVE_OPEN_PLATFORM_SUPER_CHAT"
+  superChatCallback(command) {
+    if (!this.onAddSuperChat) {
+      return
+    }
 
-  //   let data = command.data
-  //   data = {
-  //     id: data.message_id.toString(),
-  //     avatarUrl: chat.processAvatarUrl(data.uface),
-  //     timestamp: data.start_time,
-  //     authorName: data.uname,
-  //     price: data.rmb,
-  //     content: data.message,
-  //     translation: '',
-  //     medalName: data.fans_medal_name,
-  //     medalLevel: data.fans_medal_level,
-  //     isFanGroup: data.fans_medal_wearing_status ? true : false
-  //   }
-  //   this.onAddSuperChat(data)
-  // }
+    let data = command.data
+    data = {
+      id: data.message_id.toString(),
+      avatarUrl: chat.processAvatarUrl(data.uface),
+      timestamp: data.start_time,
+      authorName: data.uname,
+      price: data.rmb,
+      content: data.message,
+      translation: '',
+      medalName: data.fans_medal_name,
+      medalLevel: data.fans_medal_level,
+      isFanGroup: data.fans_medal_wearing_status ? true : false
+    }
+    this.onAddSuperChat(data)
+  }
 
-  // superChatDelCallback(command) {
-  //   if (!this.onDelSuperChat) {
-  //     return
-  //   }
+  // cmd:"LIVE_OPEN_PLATFORM_SUPER_CHAT_DEL"
+  superChatDelCallback(command) {
+    if (!this.onDelSuperChat) {
+      return
+    }
 
-  //   let ids = []
-  //   for (let id of command.data.message_ids) {
-  //     ids.push(id.toString())
-  //   }
-  //   this.onDelSuperChat({ ids })
-  // }
+    let ids = []
+    for (let id of command.data.message_ids) {
+      ids.push(id.toString())
+    }
+    this.onDelSuperChat({ ids })
+  }
 }
 
 const CMD_CALLBACK_MAP = {
+  // 通过房间号
   INTERACT_WORD: ChatClientDirectOpenLive.prototype.interactWordCallback,
   DANMU_MSG: ChatClientDirectOpenLive.prototype.danmuMsgCallback,
-  SEND_GIFT: ChatClientDirectOpenLive.prototype.sendGiftCallback,
+  // SEND_GIFT: ChatClientDirectOpenLive.prototype.sendGiftCallback,
   GUARD_BUY: ChatClientDirectOpenLive.prototype.guardBuyCallback,
   SUPER_CHAT_MESSAGE: ChatClientDirectOpenLive.prototype.superChatMessageCallback,
   SUPER_CHAT_MESSAGE_DELETE: ChatClientDirectOpenLive.prototype.superChatMessageDeleteCallback,
 
+  // 身份码改版的
   LIVE_OPEN_PLATFORM_DM: ChatClientDirectOpenLive.prototype.dmCallback,
-  // LIVE_OPEN_PLATFORM_SEND_GIFT: ChatClientDirectOpenLive.prototype.sendGiftCallback,
-  // LIVE_OPEN_PLATFORM_GUARD: ChatClientDirectOpenLive.prototype.guardCallback,
-  // LIVE_OPEN_PLATFORM_SUPER_CHAT: ChatClientDirectOpenLive.prototype.superChatCallback,
-  // LIVE_OPEN_PLATFORM_SUPER_CHAT_DEL: ChatClientDirectOpenLive.prototype.superChatDelCallback
+  LIVE_OPEN_PLATFORM_SEND_GIFT: ChatClientDirectOpenLive.prototype.sendGiftCallback,
+  LIVE_OPEN_PLATFORM_GUARD: ChatClientDirectOpenLive.prototype.guardCallback,
+  LIVE_OPEN_PLATFORM_SUPER_CHAT: ChatClientDirectOpenLive.prototype.superChatCallback,
+  LIVE_OPEN_PLATFORM_SUPER_CHAT_DEL: ChatClientDirectOpenLive.prototype.superChatDelCallback
 }

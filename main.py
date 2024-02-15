@@ -182,7 +182,7 @@ async def run():
 
 
 async def shut_down():
-    services.plugin.shut_down()
+    # services.plugin.shut_down()
 
     logger.info('Closing server')
     server.stop()

@@ -6,3 +6,5 @@ tornado==6.3.2
 pydub==0.25.1
 pydantic==2.5.3
 pyaudio==0.2.14
+qrcode==7.4.2
+pillow==10.2.0

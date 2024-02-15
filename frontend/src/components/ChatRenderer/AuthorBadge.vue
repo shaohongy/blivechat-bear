@@ -17,6 +17,9 @@
             </g>
           </svg>
         </yt-icon>
+        <img v-else :src="`/static/img/icons/guard-level-${privilegeType}.png`"
+          class="style-scope yt-live-chat-author-badge-renderer" :alt="readableAuthorTypeText"
+        >
       </div>
     </el-tooltip>
   </yt-live-chat-author-badge-renderer>

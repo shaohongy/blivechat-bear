@@ -50,16 +50,23 @@ export default class ChatClientDirectWeb extends ChatClientOfficialBase {
     return `wss://${hostServer.host}:${hostServer.wss_port}/sub`
   }
 
-  sendAuth() {
-    let authParams = {
-      uid: 0,
-      roomid: this.roomId,
-      protover: 3,
-      platform: 'web',
-      type: 2,
-      buvid: '',
-    }
-    this.websocket.send(this.makePacket(authParams, base.OP_AUTH))
+  // sendAuth() {
+  //   let authParams = {
+  //     uid: 0,
+  //     roomid: this.roomId,
+  //     protover: 3,
+  //     platform: 'web',
+  //     type: 2,
+  //     buvid: '',
+  //   }
+  //   this.websocket.send(this.makePacket(authParams, base.OP_AUTH))
+  // }
+
+  async sendAuth() {
+    const authParam = (await axios.get('/api/login/auth', { params: {
+      room_id: this.roomId
+    } })).data
+    this.websocket.send(this.makePacket(authParam, base.OP_AUTH))
   }
 
   async danmuMsgCallback(command) {
@@ -93,7 +100,7 @@ export default class ChatClientDirectWeb extends ChatClientOfficialBase {
     let authorName = info[2][1]
     let content = info[1]
     let data = {
-      avatarUrl: await chat.getAvatarUrl(uid, authorName),
+      avatarUrl: await chat.getAvatarUrl(uid, authorName, command.dm_v2),
       timestamp: info[0][4] / 1000,
       authorName: authorName,
       authorType: authorType,
@@ -104,7 +111,7 @@ export default class ChatClientDirectWeb extends ChatClientOfficialBase {
       isNewbie: info[2][5] < 10000,
       isMobileVerified: Boolean(info[2][6]),
       medalName: medalName,
-      medalLevel: medalLevel,
+      medalLevel: roomId === this.roomId ? medalLevel : 0,
       isFanGroup: roomId === this.roomId ? true : false,  // 是否是粉丝团（即粉丝勋章为当前直播间的粉丝勋章）
       id: getUuid4Hex(),
       translation: '',
